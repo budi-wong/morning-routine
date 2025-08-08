@@ -1,25 +1,92 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Morning Routine Adventure</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Magical Alicorn Morning</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>🌞 Morning Adventure 🌞</h1>
-    <div id="timer">20:00</div>
-    <div id="tasks">
-      <button class="task" data-task="Wake up">1️⃣ Wake up</button>
-      <button class="task" data-task="Get dressed">2️⃣ Get dressed</button>
-      <button class="task" data-task="Brush teeth & wash face">3️⃣ Brush teeth & wash face</button>
-      <button class="task" data-task="Eat breakfast">4️⃣ Eat breakfast</button>
-      <button class="task" data-task="Put on shoes & bag">5️⃣ Put on shoes & bag</button>
-      <button class="task" data-task="Leave for school">6️⃣ Leave for school</button>
-    </div>
-    <div id="message"></div>
+  <div class="wrap">
+    <header>
+      <h1>Magical Alicorn Morning ✨</h1>
+      <div class="top-row">
+        <div id="timer">20:00</div>
+        <button id="mute" aria-label="mute">🔊</button>
+      </div>
+    </header>
+
+    <main>
+      <div class="game-area" id="gameArea">
+        <svg id="mapSVG" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+          <!-- Background sky -->
+          <rect width="800" height="400" fill="linearGradient"/>
+          <!-- Path -->
+          <path id="path" d="M80 300 C180 220 320 220 420 300 C520 380 660 260 740 300" fill="none" stroke="#f3c6ff" stroke-width="6" stroke-dasharray="6 6"/>
+          <!-- Checkpoints -->
+          <g id="checkpoints">
+            <g class="cp" data-index="0" transform="translate(80,300)">
+              <circle r="22" fill="#fff" stroke="#ffb6f0" stroke-width="4"></circle>
+              <text y="6" font-size="14" text-anchor="middle" fill="#333">1</text>
+            </g>
+            <g class="cp" data-index="1" transform="translate(220,240)">
+              <circle r="22" fill="#fff" stroke="#ffd1a6" stroke-width="4"></circle>
+              <text y="6" font-size="14" text-anchor="middle" fill="#333">2</text>
+            </g>
+            <g class="cp" data-index="2" transform="translate(340,240)">
+              <circle r="22" fill="#fff" stroke="#b6e3ff" stroke-width="4"></circle>
+              <text y="6" font-size="14" text-anchor="middle" fill="#333">3</text>
+            </g>
+            <g class="cp" data-index="3" transform="translate(460,300)">
+              <circle r="22" fill="#fff" stroke="#c8ffdf" stroke-width="4"></circle>
+              <text y="6" font-size="14" text-anchor="middle" fill="#333">4</text>
+            </g>
+            <g class="cp" data-index="4" transform="translate(600,220)">
+              <circle r="22" fill="#fff" stroke="#fce4b6" stroke-width="4"></circle>
+              <text y="6" font-size="14" text-anchor="middle" fill="#333">5</text>
+            </g>
+            <g class="cp" data-index="5" transform="translate(740,300)">
+              <circle r="22" fill="#fff" stroke="#e8d1ff" stroke-width="4"></circle>
+              <text y="6" font-size="14" text-anchor="middle" fill="#333">6</text>
+            </g>
+          </g>
+
+          <!-- Alicorn token -->
+          <g id="alicorn" transform="translate(80,260)">
+            <!-- small preview of embedded SVG via <image> could reference asset file -->
+            <image href="assets/alicorn.svg" x="-40" y="-56" width="80" height="80"></image>
+          </g>
+
+          <!-- Treasure chest area -->
+          <g id="treasure" transform="translate(740,320)">
+            <image href="assets/chest.svg" x="-30" y="-20" width="60" height="40"></image>
+          </g>
+        </svg>
+      </div>
+
+      <aside class="controls">
+        <div class="tasks">
+          <button class="taskBtn" data-index="0">🛏️ Wake up</button>
+          <button class="taskBtn" data-index="1">👗 Get dressed</button>
+          <button class="taskBtn" data-index="2">🪥 Brush teeth</button>
+          <button class="taskBtn" data-index="3">🍳 Eat breakfast</button>
+          <button class="taskBtn" data-index="4">👟 Shoes & bag</button>
+          <button class="taskBtn" data-index="5">🚪 Leave for school</button>
+        </div>
+
+        <div class="status">
+          <div id="message">Let the alicorn guide you!</div>
+          <div class="streak">Streak: <span id="streakCount">0</span> ⭐</div>
+          <button id="resetDay">Reset</button>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      <small>Works offline after first load • Designed for kids</small>
+    </footer>
   </div>
-  <script src="script.js"></script>
+
+<script src="script.js"></script>
 </body>
 </html>

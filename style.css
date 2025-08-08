@@ -1,60 +1,34 @@
-body {
-  font-family: Arial, sans-serif;
-  background: linear-gradient(to bottom, #fefcea, #f1da36);
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+:root{
+  --bg1: #fff4ff;
+  --accent: #ff9ad1;
+  --accent2: #9ad1ff;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Inter, system-ui, Arial; background: linear-gradient(180deg,#dfefff 0%, #fff1ff 100%);
+  color:#333;
+}
+.wrap{max-width:980px;margin:12px auto;padding:12px;}
+header{display:flex;align-items:center;justify-content:space-between}
+h1{font-size:1.4rem;margin:0;color:#5b3b6b}
+.top-row{display:flex;align-items:center;gap:8px}
+#timer{font-weight:700;background:#fff;padding:6px 10px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+#mute{background:transparent;border:0;font-size:1.2rem}
+main{display:flex;gap:10px;margin-top:10px;align-items:flex-start}
+.game-area{flex:1;background:linear-gradient(180deg,#fff 0%, #f8faff 100%);padding:10px;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.06)}
+.controls{width:320px;display:flex;flex-direction:column;gap:10px}
+.tasks{display:grid;grid-template-columns:1fr;gap:8px}
+.taskBtn{padding:12px;border-radius:8px;border:2px solid transparent;background:linear-gradient(90deg,#fff,#fffaf0);font-size:1rem;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.06)}
+.taskBtn.done{background:linear-gradient(90deg,#eafff0,#d9fff0);border-color:#7bd389;color:#2c6b2e;text-decoration:line-through}
+#message{padding:10px;background:#fff;border-radius:8px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.6)}
+.streak{margin-top:6px;font-weight:600}
+footer{margin-top:10px;text-align:center;color:#666;font-size:0.85rem}
+
+@media (max-width:900px){
+  main{flex-direction:column}
+  .controls{width:100%}
 }
 
-.container {
-  text-align: center;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  max-width: 400px;
-  width: 100%;
-}
-
-h1 {
-  margin-bottom: 10px;
-}
-
-#timer {
-  font-size: 2em;
-  margin: 10px 0;
-  color: #ff5733;
-}
-
-.task {
-  display: block;
-  width: 100%;
-  margin: 8px 0;
-  padding: 12px;
-  font-size: 1.1em;
-  background-color: #f0f0f0;
-  border: 2px solid #ccc;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.task.completed {
-  background-color: #c8e6c9;
-  border-color: #388e3c;
-  text-decoration: line-through;
-  color: #388e3c;
-}
-
-.task:hover {
-  background-color: #ddd;
-}
-
-#message {
-  font-size: 1.5em;
-  margin-top: 15px;
-  font-weight: bold;
-}
+/* small animation */
+.alicorn-fly{transition:transform 0.8s cubic-bezier(.2,.9,.4,1);filter:drop-shadow(0 6px 8px rgba(100,80,120,0.12))}
+.sparkle{position:absolute;pointer-events:none}
