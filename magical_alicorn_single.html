@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Magical Alicorn Morning</title>
+<style>
+:root{
+  --bg1: #fff4ff;
+  --accent: #ff9ad1;
+  --accent2: #9ad1ff;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: linear-gradient(180deg,#dfefff 0%, #fff1ff 100%);
+  color:#333;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:980px;margin:12px auto;padding:12px;}
+header{display:flex;align-items:center;justify-content:space-between}
+h1{font-size:1.4rem;margin:0;color:#5b3b6b}
+.top-row{display:flex;align-items:center;gap:8px}
+#timer{font-weight:700;background:#fff;padding:6px 10px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+#mute{background:transparent;border:0;font-size:1.2rem;cursor:pointer}
+main{display:flex;gap:10px;margin-top:10px;align-items:flex-start}
+.game-area{flex:1;background:linear-gradient(180deg,#fff 0%, #f8faff 100%);padding:10px;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.06);position:relative;overflow:hidden}
+.controls{width:320px;display:flex;flex-direction:column;gap:10px}
+.tasks{display:grid;grid-template-columns:1fr;gap:8px}
+.taskBtn{padding:12px;border-radius:8px;border:2px solid transparent;background:linear-gradient(90deg,#fff,#fffaf0);font-size:1rem;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.06);text-align:left}
+.taskBtn.done{background:linear-gradient(90deg,#eafff0,#d9fff0);border-color:#7bd389;color:#2c6b2e;text-decoration:line-through}
+#message{padding:10px;background:#fff;border-radius:8px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.6)}
+.streak{margin-top:6px;font-weight:600}
+footer{margin-top:10px;text-align:center;color:#666;font-size:0.85rem}
+
+@media (max-width:900px){
+  main{flex-direction:column}
+  .controls{width:100%}
+}
+
+/* alicorn movement */
+.alicorn-fly{transition:transform 0.9s cubic-bezier(.2,.9,.4,1);filter:drop-shadow(0 6px 8px rgba(100,80,120,0.12))}
+.sparkle{position:absolute;pointer-events:none;font-size:22px;opacity:0.95;transform:translate(-50%,-50%);animation:pop 700ms ease-out;}
+@keyframes pop{0%{transform:translate(-50%,-50%) scale(0.6);opacity:0}50%{transform:translate(-50%,-50%) scale(1.2);opacity:1}100%{transform:translate(-50%,-50%) scale(1);opacity:0}}
+
+/* confetti simple */
+.confetti{position:absolute;left:50%;top:30%;transform:translate(-50%,-50%);font-size:44px;pointer-events:none}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Magical Alicorn Morning ✨</h1>
+      <div class="top-row">
+        <div id="timer">20:00</div>
+        <button id="mute" aria-label="mute">🔊</button>
+      </div>
+    </header>
+
+    <main>
+      <div class="game-area" id="gameArea">
+        <!-- Inline SVG map and alicorn -->
+        <svg id="mapSVG" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet" style="width:100%;height:280px">
+          <defs>
+            <linearGradient id="skyGrad" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0" stop-color="#fff9ff"/>
+              <stop offset="1" stop-color="#f0f8ff"/>
+            </linearGradient>
+          </defs>
+          <rect width="800" height="400" fill="url(#skyGrad)" rx="12"></rect>
+          <path id="path" d="M80 300 C180 220 320 220 420 300 C520 380 660 260 740 300" fill="none" stroke="#f3c6ff" stroke-width="8" stroke-dasharray="8 6" stroke-linecap="round"/>
+          <g id="checkpoints">
+            <g class="cp" data-index="0" transform="translate(80,300)">
+              <circle r="26" fill="#fff" stroke="#ffb6f0" stroke-width="4"></circle>
+              <text y="8" font-size="14" text-anchor="middle" fill="#333">1</text>
+            </g>
+            <g class="cp" data-index="1" transform="translate(220,240)">
+              <circle r="26" fill="#fff" stroke="#ffd1a6" stroke-width="4"></circle>
+              <text y="8" font-size="14" text-anchor="middle" fill="#333">2</text>
+            </g>
+            <g class="cp" data-index="2" transform="translate(340,240)">
+              <circle r="26" fill="#fff" stroke="#b6e3ff" stroke-width="4"></circle>
+              <text y="8" font-size="14" text-anchor="middle" fill="#333">3</text>
+            </g>
+            <g class="cp" data-index="3" transform="translate(460,300)">
+              <circle r="26" fill="#fff" stroke="#c8ffdf" stroke-width="4"></circle>
+              <text y="8" font-size="14" text-anchor="middle" fill="#333">4</text>
+            </g>
+            <g class="cp" data-index="4" transform="translate(600,220)">
+              <circle r="26" fill="#fff" stroke="#fce4b6" stroke-width="4"></circle>
+              <text y="8" font-size="14" text-anchor="middle" fill="#333">5</text>
+            </g>
+            <g class="cp" data-index="5" transform="translate(740,300)">
+              <circle r="26" fill="#fff" stroke="#e8d1ff" stroke-width="4"></circle>
+              <text y="8" font-size="14" text-anchor="middle" fill="#333">6</text>
+            </g>
+          </g>
+
+          <!-- Alicorn token (inline SVG art) -->
+          <g id="alicorn" transform="translate(80,260)">
+            <g id="alicornShape" transform="scale(0.9)">
+              <ellipse cx="60" cy="60" rx="40" ry="28" fill="#fff" stroke="#ffd1f0" stroke-width="2"/>
+              <circle cx="102" cy="48" r="14" fill="#fff" stroke="#ffd1f0" stroke-width="2"/>
+              <circle cx="106" cy="46" r="2.5" fill="#333"/>
+              <polygon points="100,30 106,48 94,48" fill="#ffd27a" stroke="#e6b04d" stroke-width="1"/>
+              <path d="M40 50 q-30 -20 -10 -36 q20 10 30 22 q10 10 -10 14" fill="#d1f0ff" stroke="#b0e0ff"/>
+              <path d="M72 36 q8 -12 22 -8 q-6 6 -6 12 q-12 8 -16 4" fill="#ff9ad1"/>
+              <path d="M76 44 q10 -6 18 -2 q-4 6 -8 8 q-8 -2 -10 -6" fill="#9ad1ff"/>
+              <path d="M30 68 q-12 10 -2 18 q10 -6 18 -8 q-6 -10 -6 -20" fill="#ffd1f0"/>
+              <rect x="48" y="80" width="6" height="16" rx="2" fill="#fff" stroke="#ffd1f0"/>
+              <rect x="72" y="80" width="6" height="16" rx="2" fill="#fff" stroke="#ffd1f0"/>
+            </g>
+          </g>
+
+          <!-- treasure chest small -->
+          <g id="treasure" transform="translate(740,320)">
+            <rect x="-30" y="-20" width="60" height="40" rx="6" fill="#8b5a2b" stroke="#5a2f12" stroke-width="2"></rect>
+            <rect x="-16" y="-36" width="32" height="36" rx="6" fill="#c07b43" stroke="#8b5a2b"></rect>
+            <circle cx="0" cy="-2" r="5" fill="#ffd166" stroke="#ffb84d"></circle>
+          </g>
+        </svg>
+      </div>
+
+      <aside class="controls">
+        <div class="tasks">
+          <button class="taskBtn" data-index="0">🛏️ Wake up</button>
+          <button class="taskBtn" data-index="1">👗 Get dressed</button>
+          <button class="taskBtn" data-index="2">🪥 Brush teeth</button>
+          <button class="taskBtn" data-index="3">🍳 Eat breakfast</button>
+          <button class="taskBtn" data-index="4">👟 Shoes & bag</button>
+          <button class="taskBtn" data-index="5">🚪 Leave for school</button>
+        </div>
+
+        <div class="status" style="margin-top:8px">
+          <div id="message">Let the alicorn guide you!</div>
+          <div class="streak">Streak: <span id="streakCount">0</span> ⭐</div>
+          <div style="margin-top:8px"><button id="resetDay">Reset</button></div>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      <small>Works offline after first load • Mobile-friendly</small>
+    </footer>
+  </div>
+
+<script>
+// Single-file Magical Alicorn Morning - embedded JS
+const TIME_DEFAULT = 20 * 60; // 20 minutes in seconds
+let timeLeft = TIME_DEFAULT;
+const timerEl = document.getElementById('timer');
+const taskBtns = Array.from(document.querySelectorAll('.taskBtn'));
+const alicorn = document.getElementById('alicorn');
+const checkpoints = Array.from(document.querySelectorAll('#checkpoints .cp'));
+const messageEl = document.getElementById('message');
+const streakEl = document.getElementById('streakCount');
+const muteBtn = document.getElementById('mute');
+const resetBtn = document.getElementById('resetDay');
+const gameArea = document.getElementById('gameArea');
+
+let completed = new Array(taskBtns.length).fill(false);
+let audioOn = true;
+
+// Load streak from localStorage
+let streak = Number(localStorage.getItem('alicorn_streak') || 0);
+streakEl.textContent = streak;
+
+// Helper: format time
+function formatTime(s){
+  const m = Math.floor(s/60);
+  const sec = s%60;
+  return `${m}:${sec<10?'0':''}${sec}`;
+}
+
+function updateTimerDisplay(){
+  timerEl.textContent = formatTime(timeLeft);
+  if (timeLeft <= 0){
+    clearInterval(timerInterval);
+    loseGame();
+  }
+}
+
+// Play simple tones via WebAudio
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+const audioCtx = AudioCtx ? new AudioCtx() : null;
+function playTone(freq,dur,vol=0.08){
+  if (!audioOn || !audioCtx) return;
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = 'sine';
+  o.frequency.value = freq;
+  g.gain.value = vol;
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start();
+  o.stop(audioCtx.currentTime + dur);
+}
+
+// Move alicorn to checkpoint index
+function moveAlicornTo(index){
+  const cp = checkpoints[index];
+  if (!cp) return;
+  const transform = cp.getAttribute('transform'); // e.g., translate(x,y)
+  const match = transform.match(/translate\\(([^,]+),?\\s*([^)]+)\\)/);
+  if (!match) return;
+  const x = parseFloat(match[1]);
+  const y = parseFloat(match[2]) - 40; // lift up a bit
+  // animate via transform attribute
+  alicorn.setAttribute('transform', `translate(${x},${y})`);
+  alicorn.classList.add('alicorn-fly');
+  spawnSparklesInGame(x+20, y+10);
+  playTone(880,0.08,0.06);
+}
+
+// simple sparkle using DOM
+function spawnSparklesInGame(x,y){
+  const rect = gameArea.getBoundingClientRect();
+  const sx = rect.left + (x/800)*rect.width;
+  const sy = rect.top + (y/400)*rect.height;
+  const sp = document.createElement('div');
+  sp.className = 'sparkle';
+  sp.style.left = sx + 'px';
+  sp.style.top = sy + 'px';
+  sp.textContent = '✨';
+  document.body.appendChild(sp);
+  setTimeout(()=> sp.remove(),700);
+}
+
+// Task click handler
+taskBtns.forEach(btn => {
+  btn.addEventListener('click', ()=>{
+    const idx = Number(btn.dataset.index);
+    if (completed[idx]) return;
+    completed[idx] = true;
+    btn.classList.add('done');
+    moveAlicornTo(idx);
+    // check win
+    if (completed.every(Boolean)){
+      winGame();
+    } else {
+      const msgs = ['Great! Next!','Amazing!','Keep going!','Yay!'];
+      messageEl.textContent = msgs[Math.floor(Math.random()*msgs.length)];
+    }
+  });
+});
+
+// Win/Lose handlers
+function winGame(){
+  clearInterval(timerInterval);
+  messageEl.textContent = '🌈 You finished! Alicorn is proud!';
+  playTone(1100,0.2,0.12);
+  // increment streak and save
+  streak += 1;
+  localStorage.setItem('alicorn_streak', streak);
+  streakEl.textContent = streak;
+  // celebration: confetti simple
+  const conf = document.createElement('div');
+  conf.className = 'confetti';
+  conf.innerHTML = '🌈✨🎉';
+  gameArea.appendChild(conf);
+  setTimeout(()=> conf.remove(),2200);
+}
+
+function loseGame(){
+  messageEl.textContent = "⏰ Time is up — we'll try again tomorrow!";
+  playTone(220,0.5,0.06);
+  taskBtns.forEach((b,i)=> b.disabled = true);
+}
+
+// Timer countdown
+let timerInterval = setInterval(()=>{
+  timeLeft--;
+  updateTimerDisplay();
+},1000);
+updateTimerDisplay();
+
+// Mute toggle
+muteBtn.addEventListener('click', ()=>{
+  audioOn = !audioOn;
+  muteBtn.textContent = audioOn ? '🔊' : '🔇';
+  if (audioOn && audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+});
+
+// Reset day (for testing)
+resetBtn.addEventListener('click', ()=>{
+  completed = new Array(taskBtns.length).fill(false);
+  taskBtns.forEach(b=> { b.classList.remove('done'); b.disabled = false; });
+  timeLeft = TIME_DEFAULT;
+  clearInterval(timerInterval);
+  timerInterval = setInterval(()=>{ timeLeft--; updateTimerDisplay(); },1000);
+  updateTimerDisplay();
+  messageEl.textContent = "New day! Let's go on an adventure!";
+  // move to start
+  moveAlicornTo(0);
+});
+
+// place alicorn at start on load
+window.addEventListener('load', ()=> moveAlicornTo(0));
+</script>
+</body>
+</html>
